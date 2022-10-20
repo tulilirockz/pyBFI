@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "pybfi"
+version = "0.1.0"
+description = "Simple brainfuck interpreter"
+authors = ["tulimenot <79233261+Pranprest@users.noreply.github.com>"]
+license = "BSD2"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.23.4"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+flake8 = "^4.0.1"
+mypy = "^0.961"
+autopep8 = "^1.6.0"
+covdefaults = "^2.2.0"
+pre-commit = "^2.20.0"
+
+[tool.poetry.scripts]
+bfi = "pybfi:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
