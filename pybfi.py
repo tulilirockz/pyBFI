@@ -1,24 +1,29 @@
-#!/usr/bin/env python3
-from argparse import ArgumentParser
-from pathlib import Path
-from collections import deque
-import os
-import sys
-import re
-import numpy as np
+"""An implementation of a brainfuck interpreter made in Python 3 for learning purposes."""
 import logging
+import os
+import re
+import sys
 import warnings
+from argparse import ArgumentParser
+from collections import deque
+from pathlib import Path
+
+import numpy as np
+
 
 def main() -> int:
+    """Wrap initial application."""
     _parser: ArgumentParser = ArgumentParser(prog="bfi")
-    _parser.add_argument(
-        "input",
-        type=str,
-        metavar="INPUT",
-        help="File that will be used as input"
-    )
+    _parser.add_argument("input",
+                         type=str,
+                         metavar="INPUT",
+                         help="File that will be used as input")
 
-    logging.basicConfig(level=logging.CRITICAL, format="", stream=sys.stdout, force=True)
+    logging.basicConfig(level=logging.CRITICAL,
+                        format="",
+                        stream=sys.stdout,
+                        force=True)
+
     args = _parser.parse_args()
 
     args.input = Path(args.input)
@@ -28,7 +33,8 @@ def main() -> int:
     try:
         bf_data: str = args.input.read_text()
     except OSError as e:
-        print(f"Exception Caught: {e}\nFile could not be read as a string", file=sys.stderr)
+        print(f"Exception Caught: {e}\nFile could not be read as a string",
+              file=sys.stderr)
         return 1
 
     bf_data = re.sub(r'[^\<\>\+\-\-\.\,\[\]]', '', bf_data)
@@ -39,11 +45,16 @@ def main() -> int:
 
 
 def interpret_bf(base_string: str) -> int:
+    """Interpret a bf string."""
     memory_tape = deque([np.uint8(0)])
     tape_ptr, inst_ptr = 0, 0
 
     while inst_ptr != len(base_string):
-        logging.debug(f"\n{inst_ptr=} {tape_ptr=} {base_string[inst_ptr]=} {memory_tape[tape_ptr]=}\n{memory_tape=} ")
+        logging.debug(f"""{inst_ptr=}
+{tape_ptr=}
+{base_string[inst_ptr]=}
+{memory_tape[tape_ptr]=}
+{memory_tape=}""")
         if base_string[inst_ptr] == "+":
             memory_tape[tape_ptr] += np.uint8(1)
         elif base_string[inst_ptr] == "-":
@@ -58,13 +69,12 @@ def interpret_bf(base_string: str) -> int:
             else:
                 tape_ptr -= 1
         elif base_string[inst_ptr] == ".":
-            sys.stdout.write(chr(memory_tape[tape_ptr]))
-            sys.stdout.flush()
+            print(chr(int(memory_tape[tape_ptr])))
         elif base_string[inst_ptr] == ",":
             try:
-                memory_tape[tape_ptr] = bytes(input()[0], "UTF-8")[0]
-            except IndexError as e:
-                memory_tape[tape_ptr] = bytes("\0", "ASCII")[0]
+                memory_tape[tape_ptr] = np.uint8(bytes(input()[0], "UTF-8"))[0]
+            except IndexError:
+                memory_tape[tape_ptr] = np.uint8(bytes("\0", "ASCII"))[0]
         elif base_string[inst_ptr] == "[":
             if memory_tape[tape_ptr] == 0:
                 inst_ptr = base_string.find(']', inst_ptr, len(base_string))
