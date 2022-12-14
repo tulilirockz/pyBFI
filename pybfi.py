@@ -69,7 +69,8 @@ def interpret_bf(base_string: str) -> int:
             else:
                 tape_ptr -= 1
         elif base_string[inst_ptr] == ".":
-            print(chr(int(memory_tape[tape_ptr])))
+            sys.stdout.write(chr(int(memory_tape[tape_ptr])))
+            sys.stdout.flush()
         elif base_string[inst_ptr] == ",":
             try:
                 memory_tape[tape_ptr] = np.uint8(bytes(input()[0], "UTF-8"))[0]
